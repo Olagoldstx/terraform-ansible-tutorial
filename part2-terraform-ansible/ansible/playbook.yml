@@ -1,0 +1,139 @@
+---
+- name: Configure Web Server with Nginx and Custom Website
+  hosts: web_servers
+  become: yes
+  vars:
+    website_title: "Terraform + Ansible Magic! 🚀"
+    welcome_message: "This server was configured automatically by Terraform and Ansible!"
+
+  tasks:
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install essential packages
+      apt:
+        name:
+          - nginx
+          - curl
+          - git
+          - python3-pip
+        state: present
+
+    - name: Stop nginx temporarily
+      systemd:
+        name: nginx
+        state: stopped
+
+    - name: Remove existing nginx default site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Create custom web directory
+      file:
+        path: /var/www/html
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Create custom index.html
+      template:
+        src: templates/index.html.j2
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Create info page
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Server Information</title>
+              <style>
+                  body { font-family: Arial, sans-serif; margin: 40px; }
+                  .container { max-width: 800px; margin: 0 auto; }
+                  .header { background: #2c3e50; color: white; padding: 20px; border-radius: 5px; }
+                  .info { background: #ecf0f1; padding: 20px; margin: 20px 0; border-radius: 5px; }
+                  .success { color: #27ae60; font-weight: bold; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>🎉 Terraform + Ansible Success! 🎉</h1>
+                  </div>
+                  <div class="info">
+                      <h2>Server Configuration Details:</h2>
+                      <p><strong>Hostname:</strong> {{ ansible_hostname }}</p>
+                      <p><strong>IP Address:</strong> {{ ansible_default_ipv4.address }}</p>
+                      <p><strong>OS:</strong> {{ ansible_distribution }} {{ ansible_distribution_version }}</p>
+                      <p><strong>Configured By:</strong> Ansible Playbook</p>
+                      <p><strong>Timestamp:</strong> {{ ansible_date_time.iso8601 }}</p>
+                  </div>
+                  <p class="success">✅ This server was fully automated by Infrastructure as Code!</p>
+              </div>
+          </body>
+          </html>
+        dest: /var/www/html/info.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Create clean nginx configuration
+      copy:
+        content: |
+          server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+
+              root /var/www/html;
+              index index.html index.htm;
+
+              server_name _;
+
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/default
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+
+    - name: Test nginx configuration
+      command: nginx -t
+      changed_when: false
+      register: nginx_test
+
+    - name: Start and enable nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Display completion message
+      debug:
+        msg: |
+          🎉 WEB SERVER SUCCESSFULLY CONFIGURED! 🎉
+          
+          Website URL: http://{{ ansible_default_ipv4.address }}
+          Info Page: http://{{ ansible_default_ipv4.address }}/info.html
+          
+          Terraform built the infrastructure!
+          Ansible configured the software!
+          DevOps magic complete! ✨
+
+    - name: Show nginx test result
+      debug:
+        var: nginx_test.stdout

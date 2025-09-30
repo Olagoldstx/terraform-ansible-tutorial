@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ website_title }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        .success-badge {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .tech-stack {
+            margin: 30px 0;
+        }
+        .tech-item {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 {{ website_title }}</h1>
+            <div class="subtitle">{{ welcome_message }}</div>
+            
+            <div class="success-badge">
+                ✅ FULLY AUTOMATED DEVOPS PIPELINE
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <div class="tech-item">Terraform</div>
+            <div class="tech-item">Ansible</div>
+            <div class="tech-item">AWS EC2</div>
+            <div class="tech-item">NGINX</div>
+            <div class="tech-item">Ubuntu</div>
+            <div class="tech-item">SSH</div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🏗️ Infrastructure as Code</h3>
+                <p>Terraform created all AWS resources: VPC, Subnet, Security Groups, and EC2 instance</p>
+            </div>
+            <div class="feature">
+                <h3>⚙️ Configuration Management</h3>
+                <p>Ansible automated software installation, service configuration, and deployment</p>
+            </div>
+            <div class="feature">
+                <h3>🔒 Secure by Design</h3>
+                <p>Proper security groups, SSH key authentication, and minimal exposure</p>
+            </div>
+            <div class="feature">
+                <h3>🔄 Repeatable Process</h3>
+                <p>Entire environment can be recreated with two simple commands</p>
+            </div>
+        </div>
+
+        <div class="info">
+            <p><strong>Server:</strong> {{ ansible_hostname }} | <strong>IP:</strong> {{ ansible_default_ipv4.address }}</p>
+            <p><strong>Deployed:</strong> {{ ansible_date_time.iso8601 }}</p>
+            <p><a href="/info.html" style="color: #ffd700; text-decoration: none;">📊 View Detailed Server Info</a></p>
+        </div>
+    </div>
+</body>
+</html>
